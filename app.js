@@ -15,34 +15,58 @@ document.addEventListener('DOMContentLoaded', () => {
     verificarLogin();
 
     // --- 1. GESTÃO DE USUÁRIOS ---
-    document.getElementById('form-login').addEventListener('submit', (e) => {
-        e.preventDefault();
+   // Substitua APENAS o bloco do form-login no seu app.js
+    document.getElementById('form-login').addEventListener('submit', async (e) => {
+        e.preventDefault(); // Evita que a página recarregue
+        
         const nome = document.getElementById('u-nome').value;
         const email = document.getElementById('u-email').value;
+        const btnSubmit = e.target.querySelector('button');
         
-        usuarioAtual = { nome, email };
-        localStorage.setItem('usuario', JSON.stringify(usuarioAtual));
-        verificarLogin();
-    });
+        // Feedback visual (opcional)
+        const textoOriginal = btnSubmit.innerText;
+        btnSubmit.innerText = 'Conectando...';
 
-    document.getElementById('btn-logout').addEventListener('click', () => {
-        usuarioAtual = null;
-        localStorage.removeItem('usuario');
-        verificarLogin();
-    });
+        try {
+            // 1. Verifica se o usuário já está cadastrado no banco pelo e-mail
+            let { data: usuarioExistente, error: erroBusca } = await db
+                .from('Usuarios')
+                .select('*')
+                .eq('email', email)
+                .maybeSingle();
 
-    function verificarLogin() {
-        if (usuarioAtual) {
-            document.getElementById('user-display-name').innerText = usuarioAtual.nome;
-            telaLogin.classList.add('hidden');
-            telaLobby.classList.add('hidden');
-            telaDashboard.classList.remove('hidden');
-        } else {
-            telaDashboard.classList.add('hidden');
-            telaLobby.classList.add('hidden');
-            telaLogin.classList.remove('hidden');
+            let dadosUsuario = usuarioExistente;
+
+            // 2. Se não existir, faz o INSERT (cadastro) do novo usuário
+            if (!dadosUsuario) {
+                const { data: novoUsuario, error: erroInsert } = await db
+                    .from('Usuarios')
+                    .insert([{ nome: nome, email: email }])
+                    .select()
+                    .single();
+
+                if (erroInsert) throw erroInsert;
+                dadosUsuario = novoUsuario;
+            }
+
+            // 3. Salva a sessão localmente AGORA com o "id" oficial gerado pelo Supabase
+            usuarioAtual = { 
+                id: dadosUsuario.id, 
+                nome: dadosUsuario.nome, 
+                email: dadosUsuario.email 
+            };
+            localStorage.setItem('usuario', JSON.stringify(usuarioAtual));
+            
+            // 4. Libera o acesso para o Dashboard
+            verificarLogin();
+
+        } catch (error) {
+            console.error("Erro ao realizar login:", error);
+            alert("Erro ao conectar com o banco de dados. Verifique o console.");
+        } finally {
+            btnSubmit.innerText = textoOriginal;
         }
-    }
+    });
 
     // --- 2. CRIAÇÃO DE GRUPO ---
     document.getElementById('form-criar').addEventListener('submit', (e) => {
