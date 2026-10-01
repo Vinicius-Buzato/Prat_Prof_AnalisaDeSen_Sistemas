@@ -2,6 +2,7 @@
 const SUPABASE_URL = 'https://qvqdloqlicdoqevrtblr.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_zWeHsS3rE1yMxIKROCnZ9Q_8e68WfuR';
 
+
 // Inicialização segura utilizando a biblioteca global importada no HTML
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -33,9 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
             btnSubmit.innerText = 'Conectando...';
 
             try {
-                // Procura utilizador existente pelo e-mail
+                // Procura utilizador existente pelo e-mail na tabela em minúsculo
                 let { data: usuarioExistente, error: erroBusca } = await db
-                    .from('Usuarios')
+                    .from('usuarios')
                     .select('*')
                     .eq('email', email)
                     .maybeSingle();
@@ -47,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Se não existir na base de dados, realiza o registo
                 if (!dadosUsuario) {
                     const { data: novoUsuario, error: erroInsert } = await db
-                        .from('Usuarios')
+                        .from('usuarios')
                         .insert([{ nome: nome, email: email }])
                         .select()
                         .single();
@@ -87,9 +88,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Gera um código de convite aleatório de 6 caracteres
                 const codigoConvite = Math.random().toString(36).substring(2, 8).toUpperCase();
 
-                // Insere a nova viagem na tabela Viagens
+                // Insere a nova viagem na tabela viagens
                 const { data: novaViagem, error: erroViagem } = await db
-                    .from('Viagens')
+                    .from('viagens')
                     .insert([{
                         codigo_convite: codigoConvite,
                         destino: destino,
@@ -100,9 +101,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (erroViagem) throw erroViagem;
 
-                // Relaciona o utilizador criador como Organizador na tabela Viagem_Participantes
+                // Relaciona o utilizador criador como Organizador na tabela viagem_participantes
                 const { error: erroPart } = await db
-                    .from('Viagem_Participantes')
+                    .from('viagem_participantes')
                     .insert([{
                         viagem_id: novaViagem.id,
                         usuario_id: usuarioAtual.id,
@@ -140,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 // Procura a viagem pelo código de convite
                 const { data: viagem, error: erroBusca } = await db
-                    .from('Viagens')
+                    .from('viagens')
                     .select('*')
                     .eq('codigo_convite', codigo)
                     .maybeSingle();
@@ -153,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Insere o utilizador como Passageiro
                 const { error: erroPart } = await db
-                    .from('Viagem_Participantes')
+                    .from('viagem_participantes')
                     .insert([{
                         viagem_id: viagem.id,
                         usuario_id: usuarioAtual.id,
@@ -233,20 +234,20 @@ async function carregarLobbyViagem(viagemId) {
     try {
         // Procura os dados da viagem
         const { data: viagem, error: erroV } = await db
-            .from('Viagens')
+            .from('viagens')
             .select('*')
             .eq('id', viagemId)
             .single();
 
         if (erroV) throw erroV;
 
-        // Procura os participantes e cruza com a tabela Usuarios
+        // Procura os participantes e cruza com a tabela usuarios
         const { data: participantes, error: erroP } = await db
-            .from('Viagem_Participantes')
+            .from('viagem_participantes')
             .select(`
                 tipo_participante,
                 origem,
-                Usuarios ( nome, email )
+                usuarios ( nome, email )
             `)
             .eq('viagem_id', viagemId);
 
@@ -268,7 +269,7 @@ async function carregarLobbyViagem(viagemId) {
         if (elLista) {
             elLista.innerHTML = participantes.map(p => `
                 <li style="padding: 8px 0; border-bottom: 1px solid #eee;">
-                    <strong>${p.Usuarios ? p.Usuarios.nome : 'Utilizador'}</strong> (${p.tipo_participante}) 
+                    <strong>${p.usuarios ? p.usuarios.nome : 'Utilizador'}</strong> (${p.tipo_participante}) 
                     <br><small>Origem: ${p.origem}</small>
                 </li>
             `).join('');
