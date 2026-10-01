@@ -1,7 +1,10 @@
+// ==========================================
+// CONFIGURAÇÃO DO SUPABASE
+// ==========================================
 window.SUPABASE_URL = window.SUPABASE_URL || 'https://qvqdloqlicdoqevrtblr.supabase.co';
-window.SUPABASE_KEY = window.SUPABASE_KEY || 'sb_publishable_zWeHsS3rE1yMxIKROCnZ9Q_8e68WfuR';
-// Inicialização segura utilizando a biblioteca global importada no HTML
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+window.SUPABASE_KEY = window.SUPABASE_KEY || 'SUA_CHAVE_PUBLISHABLE_OU_ANON_AQUI';
+
+const db = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
 
 // Estado Global da Aplicação
 let usuarioAtual = JSON.parse(localStorage.getItem('usuario')) || null;
@@ -18,17 +21,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (formLogin) {
         formLogin.addEventListener('submit', async (e) => {
             e.preventDefault();
+            e.stopPropagation();
             
             const nome = document.getElementById('u-nome').value.trim();
             const email = document.getElementById('u-email').value.trim();
-            const btnSubmit = e.target.querySelector('button');
+            const btnSubmit = formLogin.querySelector('button');
             
-            if (!nome || !email) {
-                alert('Por favor, preencha o nome e o e-mail.');
-                return;
-            }
-
-            btnSubmit.innerText = 'Conectando...';
+            if (!nome || !email) return alert('Preencha nome e e-mail.');
+            if (btnSubmit) btnSubmit.innerText = 'Conectando...';
 
             try {
                 let { data: usuarioExistente, error: erroBusca } = await db
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!dadosUsuario) {
                     const { data: novoUsuario, error: erroInsert } = await db
                         .from('usuarios')
-                        .insert([{ nome: nome, email: email }])
+                        .insert([{ nome, email }])
                         .select()
                         .single();
 
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Erro no Login:', err);
                 alert('Erro ao autenticar: ' + err.message);
             } finally {
-                btnSubmit.innerText = 'Entrar no Sistema';
+                if (btnSubmit) btnSubmit.innerText = 'Entrar no Sistema';
             }
         });
     }
@@ -71,40 +71,20 @@ document.addEventListener('DOMContentLoaded', () => {
         formCriar.addEventListener('submit', async (e) => {
             e.preventDefault();
             e.stopPropagation();
-    
-            console.log("-> A tentar criar viagem...");
-    
-            const destinoEl = document.getElementById('v-destino');
-            const horarioEl = document.getElementById('v-horario');
-            const origemEl = document.getElementById('v-origem');
+
+            const destino = document.getElementById('v-destino').value.trim();
+            const horario = document.getElementById('v-horario').value;
+            const origem = document.getElementById('v-origem')?.value.trim() || 'Não informada';
             const btnSubmit = formCriar.querySelector('button');
-    
-            if (!destinoEl || !horarioEl) {
-                alert("Erro: Campos 'v-destino' ou 'v-horario' não encontrados no HTML!");
-                return;
-            }
-    
-            const destino = destinoEl.value.trim();
-            const horario = horarioEl.value; // Formato do input datetime-local
-            const origem = origemEl ? origemEl.value.trim() : 'Não informada';
-    
-            if (!destino || !horario) {
-                alert('Por favor, preencha o destino e o horário.');
-                return;
-            }
-    
-            btnSubmit.innerText = 'A criar viagem...';
-    
+
+            if (!destino || !horario) return alert('Preencha destino e horário.');
+            if (btnSubmit) btnSubmit.innerText = 'Criando grupo...';
+
             try {
-                // Gera um código de convite único de 6 caracteres
                 const codigoConvite = Math.random().toString(36).substring(2, 8).toUpperCase();
-    
-                // Formata o horário para ISO string compatível com o PostgreSQL/Supabase
                 const dataFormatada = new Date(horario).toISOString();
-    
-                console.log("-> A enviar para a tabela 'viagens':", { codigoConvite, destino, dataFormatada });
-    
-                // 1. Cria a viagem
+
+                // Insere a viagem
                 const { data: novaViagem, error: erroViagem } = await db
                     .from('viagens')
                     .insert([{
@@ -114,12 +94,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     }])
                     .select()
                     .single();
-    
+
                 if (erroViagem) throw erroViagem;
-    
-                console.log("-> Viagem criada no banco com ID:", novaViagem.id);
-    
-                // 2. Associa o criador como Organizador
+
+                // Vincula criador como Organizador
                 const { error: erroPart } = await db
                     .from('viagem_participantes')
                     .insert([{
@@ -129,36 +107,32 @@ document.addEventListener('DOMContentLoaded', () => {
                         origem: origem,
                         tempo_estimado_minutos: 0
                     }]);
-    
+
                 if (erroPart) throw erroPart;
-    
-                console.log("-> Participante vinculado como Organizador com sucesso!");
-    
-                alert(`Viagem criada com sucesso! Código do grupo: ${codigoConvite}`);
-                carregarLobbyViagem(novaViagem.id);
-    
+
+                await carregarLobbyViagem(novaViagem.id);
+
             } catch (err) {
-                console.error("ERRO AO CRIAR VIAGEM:", err);
+                console.error('Erro ao criar viagem:', err);
                 alert('Erro ao criar viagem: ' + err.message);
             } finally {
-                btnSubmit.innerText = 'Criar Grupo';
+                if (btnSubmit) btnSubmit.innerText = 'Criar Grupo';
             }
         });
-    } else {
-        console.error("ERRO: O elemento com id 'form-criar-viagem' não foi encontrado no HTML!");
     }
 
-    // 3. FORMULÁRIO DE ENTRAR EM UMA VIAGEM
+    // 3. FORMULÁRIO DE ENTRAR EM VIAGEM
     const formEntrar = document.getElementById('form-entrar-viagem');
     if (formEntrar) {
         formEntrar.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+            e.stopPropagation();
+
             const codigo = document.getElementById('v-codigo').value.trim().toUpperCase();
             const origem = document.getElementById('v-origem-participante')?.value.trim() || 'Não informada';
-            const btnSubmit = e.target.querySelector('button');
+            const btnSubmit = formEntrar.querySelector('button');
 
-            btnSubmit.innerText = 'A procurar...';
+            if (btnSubmit) btnSubmit.innerText = 'Procurando...';
 
             try {
                 const { data: viagem, error: erroBusca } = await db
@@ -168,10 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     .maybeSingle();
 
                 if (erroBusca) throw erroBusca;
-                if (!viagem) {
-                    alert('Código de viagem inválido ou não encontrado.');
-                    return;
-                }
+                if (!viagem) return alert('Código de viagem inválido.');
 
                 const { error: erroPart } = await db
                     .from('viagem_participantes')
@@ -187,36 +158,30 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw erroPart;
                 }
 
-                carregarLobbyViagem(viagem.id);
+                await carregarLobbyViagem(viagem.id);
 
             } catch (err) {
                 console.error('Erro ao entrar na viagem:', err);
                 alert('Erro ao entrar na viagem: ' + err.message);
             } finally {
-                btnSubmit.innerText = 'Entrar no Grupo';
+                if (btnSubmit) btnSubmit.innerText = 'Entrar no Grupo';
             }
         });
     }
 
     // 4. LOGOUT
-    const btnLogout = document.getElementById('btn-logout');
-    if (btnLogout) {
-        btnLogout.addEventListener('click', () => {
-            usuarioAtual = null;
-            viagemAtual = null;
-            localStorage.removeItem('usuario');
-            verificarLogin();
-        });
-    }
+    document.getElementById('btn-logout')?.addEventListener('click', () => {
+        usuarioAtual = null;
+        viagemAtual = null;
+        localStorage.removeItem('usuario');
+        verificarLogin();
+    });
 
     // 5. VOLTAR AO DASHBOARD
-    const btnVoltar = document.getElementById('btn-voltar-dashboard');
-    if (btnVoltar) {
-        btnVoltar.addEventListener('click', () => {
-            viagemAtual = null;
-            verificarLogin();
-        });
-    }
+    document.getElementById('btn-voltar-dashboard')?.addEventListener('click', () => {
+        viagemAtual = null;
+        verificarLogin();
+    });
 });
 
 // ==========================================
@@ -240,6 +205,7 @@ function verificarLogin() {
             telaLogin?.classList.add('hidden');
             telaLobby?.classList.add('hidden');
             telaDashboard?.classList.remove('hidden');
+            carregarMinhasViagens(); // Carrega histórico na Dashboard
         }
     } else {
         telaDashboard?.classList.add('hidden');
@@ -248,8 +214,10 @@ function verificarLogin() {
     }
 }
 
+// Carrega os detalhes completos do Lobby da Viagem
 async function carregarLobbyViagem(viagemId) {
     try {
+        // Busca a viagem
         const { data: viagem, error: erroV } = await db
             .from('viagens')
             .select('*')
@@ -258,20 +226,21 @@ async function carregarLobbyViagem(viagemId) {
 
         if (erroV) throw erroV;
 
+        // Busca participantes + dados de usuarios
         const { data: participantes, error: erroP } = await db
             .from('viagem_participantes')
             .select(`
                 tipo_participante,
                 origem,
-                usuarios ( nome, email )
+                usuarios:usuario_id ( nome, email )
             `)
             .eq('viagem_id', viagemId);
 
         if (erroP) throw erroP;
 
         viagemAtual = viagem;
-        verificarLogin();
 
+        // Atualiza a interface
         const elDestino = document.getElementById('lobby-destino');
         const elHorario = document.getElementById('lobby-horario');
         const elCodigo = document.getElementById('lobby-codigo');
@@ -279,19 +248,63 @@ async function carregarLobbyViagem(viagemId) {
 
         if (elDestino) elDestino.innerText = viagem.destino;
         if (elHorario) elHorario.innerText = new Date(viagem.horario_chegada).toLocaleString('pt-BR');
-        if (elCodigo) elCodigo.innerText = viagem.codigo_convite;
+        if (elCodigo) elCodigo.innerText = `Código: ${viagem.codigo_convite}`;
 
         if (elLista) {
             elLista.innerHTML = participantes.map(p => `
-                <li style="padding: 8px 0; border-bottom: 1px solid #eee;">
-                    <strong>${p.usuarios ? p.usuarios.nome : 'Utilizador'}</strong> (${p.tipo_participante}) 
+                <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                    <strong>${p.usuarios ? p.usuarios.nome : 'Usuário'}</strong> 
+                    <span style="font-size: 0.85em; color: #555;">(${p.tipo_participante})</span>
                     <br><small>Origem: ${p.origem}</small>
                 </li>
             `).join('');
         }
 
+        verificarLogin();
+
     } catch (err) {
         console.error('Erro ao carregar lobby:', err);
-        alert('Erro ao carregar os detalhes da viagem: ' + err.message);
+        alert('Erro ao carregar detalhes da viagem: ' + err.message);
+    }
+}
+
+// Carrega a lista de viagens que o usuário faz parte no Dashboard
+async function carregarMinhasViagens() {
+    const elContainer = document.getElementById('minhas-viagens-lista');
+    if (!elContainer || !usuarioAtual) return;
+
+    try {
+        const { data, error } = await db
+            .from('viagem_participantes')
+            .select(`
+                tipo_participante,
+                viagens:viagem_id ( id, destino, horario_chegada, codigo_convite )
+            `)
+            .eq('usuario_id', usuarioAtual.id);
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+            elContainer.innerHTML = '<p style="color: #666; font-size: 0.9em;">Você ainda não participa de nenhuma viagem.</p>';
+            return;
+        }
+
+        elContainer.innerHTML = data.map(item => {
+            const v = item.viagens;
+            if (!v) return '';
+            return `
+                <div style="background: #f8f9fa; border: 1px solid #e0e0e0; padding: 12px; margin-bottom: 8px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong>📍 ${v.destino}</strong><br>
+                        <small>Chegada: ${new Date(v.horario_chegada).toLocaleString('pt-BR')}</small><br>
+                        <small style="color: #0066cc;">Código: ${v.codigo_convite}</small>
+                    </div>
+                    <button onclick="carregarLobbyViagem(${v.id})" style="padding: 6px 12px; cursor: pointer; background: #0066cc; color: white; border: none; border-radius: 4px;">Acessar</button>
+                </div>
+            `;
+        }).join('');
+
+    } catch (err) {
+        console.error('Erro ao carregar viagens:', err);
     }
 }
