@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotas Compartilhadas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>🗺️ Rotas Compartilhadas</h1>
+        <p>Cheguem juntos e no horário certo.</p>
+    </header>
+
+    <main class="container">
+        
+        <!-- TELA 1: LOGIN / IDENTIFICAÇÃO -->
+        <section id="tela-login" class="card">
+            <h2>Identifique-se</h2>
+            <p class="subtitle">Faça login ou cadastre-se rapidamente para começar.</p>
+            <form id="form-login">
+                <div class="form-group">
+                    <label for="u-nome">Seu Nome:</label>
+                    <input type="text" id="u-nome" placeholder="Ex: Vinicius" required>
+                </div>
+                <div class="form-group">
+                    <label for="u-email">E-mail:</label>
+                    <input type="email" id="u-email" placeholder="vinicius@email.com" required>
+                </div>
+                <button type="submit" class="btn-primary">Entrar no Sistema</button>
+            </form>
+        </section>
+
+        <!-- TELA 2: DASHBOARD (Criar / Entrar) -->
+        <div id="tela-dashboard" class="hidden">
+            <div class="welcome-bar">
+                <span>Olá, <strong id="user-display-name">Usuário</strong>! 👋</span>
+                <button id="btn-logout" class="btn-text">Sair</button>
+            </div>
+
+            <div class="grid-actions">
+                <section class="card">
+                    <h2>Criar Nova Viagem</h2>
+                    <form id="form-criar">
+                        <div class="form-group">
+                            <label for="c-destino">Destino Final (Ponto C):</label>
+                            <input type="text" id="c-destino" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="c-horario">Horário de Chegada (X):</label>
+                            <input type="datetime-local" id="c-horario" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="c-origem">Seu Ponto de Partida:</label>
+                            <input type="text" id="c-origem" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Gerar Código de Viagem</button>
+                    </form>
+                </section>
+
+                <section class="card">
+                    <h2>Entrar em uma Viagem</h2>
+                    <form id="form-entrar">
+                        <div class="form-group">
+                            <label for="e-codigo">Código do Convite:</label>
+                            <input type="text" id="e-codigo" maxlength="6" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="e-origem">Seu Ponto de Partida:</label>
+                            <input type="text" id="e-origem" required>
+                        </div>
+                        <button type="submit" class="btn-secondary">Buscar e Juntar-se</button>
+                    </form>
+                </section>
+            </div>
+        </div>
+
+        <!-- TELA DE CARREGAMENTO -->
+        <div id="loading" class="hidden text-center">
+            <div class="spinner"></div>
+            <p>Calculando rotas e sincronizando participantes...</p>
+        </div>
+
+        <!-- TELA 3: LOBBY DA VIAGEM -->
+        <section id="tela-lobby" class="card hidden">
+            <button id="btn-voltar" class="btn-text mb-15">← Voltar ao Início</button>
+            
+            <div class="lobby-header">
+                <h2>Resumo da Viagem</h2>
+                <div class="code-badge">Código: <strong id="l-codigo">---</strong></div>
+            </div>
+            
+            <div class="viagem-info">
+                <p>📍 <strong>Destino:</strong> <span id="l-destino"></span></p>
+                <p>⏰ <strong>Chegada Exigida:</strong> <span id="l-horario"></span></p>
+            </div>
+
+            <div class="participantes-section">
+                <h3>Viajantes Confirmados</h3>
+                <ul id="lista-participantes" class="lista-timeline"></ul>
+            </div>
+        </section>
+
+    </main>
+    <script src="app.js"></script>
+</body>
+</html>
