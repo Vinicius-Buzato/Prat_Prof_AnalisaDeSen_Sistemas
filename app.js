@@ -70,29 +70,56 @@ document.addEventListener('DOMContentLoaded', () => {
     if (formCriar) {
         formCriar.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            const destino = document.getElementById('v-destino').value.trim();
-            const horario = document.getElementById('v-horario').value;
-            const origem = document.getElementById('v-origem')?.value.trim() || 'Não informada';
-            const btnSubmit = e.target.querySelector('button');
-
+            e.stopPropagation();
+    
+            console.log("-> A tentar criar viagem...");
+    
+            const destinoEl = document.getElementById('v-destino');
+            const horarioEl = document.getElementById('v-horario');
+            const origemEl = document.getElementById('v-origem');
+            const btnSubmit = formCriar.querySelector('button');
+    
+            if (!destinoEl || !horarioEl) {
+                alert("Erro: Campos 'v-destino' ou 'v-horario' não encontrados no HTML!");
+                return;
+            }
+    
+            const destino = destinoEl.value.trim();
+            const horario = horarioEl.value; // Formato do input datetime-local
+            const origem = origemEl ? origemEl.value.trim() : 'Não informada';
+    
+            if (!destino || !horario) {
+                alert('Por favor, preencha o destino e o horário.');
+                return;
+            }
+    
             btnSubmit.innerText = 'A criar viagem...';
-
+    
             try {
+                // Gera um código de convite único de 6 caracteres
                 const codigoConvite = Math.random().toString(36).substring(2, 8).toUpperCase();
-
+    
+                // Formata o horário para ISO string compatível com o PostgreSQL/Supabase
+                const dataFormatada = new Date(horario).toISOString();
+    
+                console.log("-> A enviar para a tabela 'viagens':", { codigoConvite, destino, dataFormatada });
+    
+                // 1. Cria a viagem
                 const { data: novaViagem, error: erroViagem } = await db
                     .from('viagens')
                     .insert([{
                         codigo_convite: codigoConvite,
                         destino: destino,
-                        horario_chegada: horario
+                        horario_chegada: dataFormatada
                     }])
                     .select()
                     .single();
-
+    
                 if (erroViagem) throw erroViagem;
-
+    
+                console.log("-> Viagem criada no banco com ID:", novaViagem.id);
+    
+                // 2. Associa o criador como Organizador
                 const { error: erroPart } = await db
                     .from('viagem_participantes')
                     .insert([{
@@ -102,19 +129,23 @@ document.addEventListener('DOMContentLoaded', () => {
                         origem: origem,
                         tempo_estimado_minutos: 0
                     }]);
-
+    
                 if (erroPart) throw erroPart;
-
+    
+                console.log("-> Participante vinculado como Organizador com sucesso!");
+    
                 alert(`Viagem criada com sucesso! Código do grupo: ${codigoConvite}`);
                 carregarLobbyViagem(novaViagem.id);
-
+    
             } catch (err) {
-                console.error('Erro ao criar viagem:', err);
+                console.error("ERRO AO CRIAR VIAGEM:", err);
                 alert('Erro ao criar viagem: ' + err.message);
             } finally {
                 btnSubmit.innerText = 'Criar Grupo';
             }
         });
+    } else {
+        console.error("ERRO: O elemento com id 'form-criar-viagem' não foi encontrado no HTML!");
     }
 
     // 3. FORMULÁRIO DE ENTRAR EM UMA VIAGEM
