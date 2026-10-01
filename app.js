@@ -6,7 +6,7 @@ window.SUPABASE_KEY = window.SUPABASE_KEY || 'sb_publishable_zWeHsS3rE1yMxIKROCn
 
 const db = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
 
-// Estado Global da Aplicação
+// Estado Global
 let usuarioAtual = JSON.parse(localStorage.getItem('usuario')) || null;
 let viagemAtual = null;
 
@@ -84,7 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const codigoConvite = Math.random().toString(36).substring(2, 8).toUpperCase();
                 const dataFormatada = new Date(horario).toISOString();
 
-                // Insere a viagem
                 const { data: novaViagem, error: erroViagem } = await db
                     .from('viagens')
                     .insert([{
@@ -97,7 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (erroViagem) throw erroViagem;
 
-                // Vincula criador como Organizador
                 const { error: erroPart } = await db
                     .from('viagem_participantes')
                     .insert([{
@@ -110,26 +108,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (erroPart) throw erroPart;
 
-                await carregarLobbyViagem(novaViagem.id);
+                await window.carregarLobbyViagem(novaViagem.id);
 
             } catch (err) {
                 console.error('Erro ao criar viagem:', err);
                 alert('Erro ao criar viagem: ' + err.message);
             } finally {
-                if (btnSubmit) btnSubmit.innerText = 'Criar Grupo';
+                if (btnSubmit) btnSubmit.innerText = 'Gerar Código de Viagem';
             }
         });
     }
 
-    // 3. FORMULÁRIO DE ENTRAR EM VIAGEM
-    const formEntrar = document.getElementById('form-entrar-viagem');
+    // 3. FORMULÁRIO DE ENTRAR EM VIAGEM (Mapeado com o id "form-entrar")
+    const formEntrar = document.getElementById('form-entrar');
     if (formEntrar) {
         formEntrar.addEventListener('submit', async (e) => {
             e.preventDefault();
             e.stopPropagation();
 
-            const codigo = document.getElementById('v-codigo').value.trim().toUpperCase();
-            const origem = document.getElementById('v-origem-participante')?.value.trim() || 'Não informada';
+            const codigo = document.getElementById('e-codigo').value.trim().toUpperCase();
+            const origem = document.getElementById('e-origem')?.value.trim() || 'Não informada';
             const btnSubmit = formEntrar.querySelector('button');
 
             if (btnSubmit) btnSubmit.innerText = 'Procurando...';
@@ -158,13 +156,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw erroPart;
                 }
 
-                await carregarLobbyViagem(viagem.id);
+                await window.carregarLobbyViagem(viagem.id);
 
             } catch (err) {
                 console.error('Erro ao entrar na viagem:', err);
                 alert('Erro ao entrar na viagem: ' + err.message);
             } finally {
-                if (btnSubmit) btnSubmit.innerText = 'Entrar no Grupo';
+                if (btnSubmit) btnSubmit.innerText = 'Buscar e Juntar-se';
             }
         });
     }
@@ -177,15 +175,16 @@ document.addEventListener('DOMContentLoaded', () => {
         verificarLogin();
     });
 
-    // 5. VOLTAR AO DASHBOARD
-    document.getElementById('btn-voltar-dashboard')?.addEventListener('click', () => {
+    // 5. BOTÃO VOLTAR
+    document.getElementById('btn-voltar')?.addEventListener('click', (e) => {
+        e.preventDefault();
         viagemAtual = null;
         verificarLogin();
     });
 });
 
 // ==========================================
-// FUNÇÕES DE NAVEGAÇÃO E INTERFACE
+// FUNÇÕES GLOBAIS DE INTERFACE
 // ==========================================
 
 function verificarLogin() {
@@ -205,7 +204,7 @@ function verificarLogin() {
             telaLogin?.classList.add('hidden');
             telaLobby?.classList.add('hidden');
             telaDashboard?.classList.remove('hidden');
-            carregarMinhasViagens(); // Carrega histórico na Dashboard
+            carregarMinhasViagens();
         }
     } else {
         telaDashboard?.classList.add('hidden');
@@ -214,10 +213,9 @@ function verificarLogin() {
     }
 }
 
-// Carrega os detalhes completos do Lobby da Viagem
-async function carregarLobbyViagem(viagemId) {
+// Carrega o Lobby utilizando os IDs exatos do HTML do cliente (l-codigo, l-destino, l-horario, lista-participantes)
+window.carregarLobbyViagem = async function(viagemId) {
     try {
-        // Busca a viagem
         const { data: viagem, error: erroV } = await db
             .from('viagens')
             .select('*')
@@ -226,13 +224,12 @@ async function carregarLobbyViagem(viagemId) {
 
         if (erroV) throw erroV;
 
-        // Busca participantes + dados de usuarios
         const { data: participantes, error: erroP } = await db
             .from('viagem_participantes')
             .select(`
                 tipo_participante,
                 origem,
-                usuarios:usuario_id ( nome, email )
+                usuarios ( nome, email )
             `)
             .eq('viagem_id', viagemId);
 
@@ -240,22 +237,22 @@ async function carregarLobbyViagem(viagemId) {
 
         viagemAtual = viagem;
 
-        // Atualiza a interface
-        const elDestino = document.getElementById('lobby-destino');
-        const elHorario = document.getElementById('lobby-horario');
-        const elCodigo = document.getElementById('lobby-codigo');
-        const elLista = document.getElementById('lobby-lista-participantes');
+        // Atualização dos elementos com os IDs corretos do HTML
+        const elDestino = document.getElementById('l-destino');
+        const elHorario = document.getElementById('l-horario');
+        const elCodigo = document.getElementById('l-codigo');
+        const elLista = document.getElementById('lista-participantes');
 
         if (elDestino) elDestino.innerText = viagem.destino;
         if (elHorario) elHorario.innerText = new Date(viagem.horario_chegada).toLocaleString('pt-BR');
-        if (elCodigo) elCodigo.innerText = `Código: ${viagem.codigo_convite}`;
+        if (elCodigo) elCodigo.innerText = viagem.codigo_convite;
 
         if (elLista) {
             elLista.innerHTML = participantes.map(p => `
-                <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                <li style="padding: 10px 0; border-bottom: 1px solid #eee; list-style: none;">
                     <strong>${p.usuarios ? p.usuarios.nome : 'Usuário'}</strong> 
-                    <span style="font-size: 0.85em; color: #555;">(${p.tipo_participante})</span>
-                    <br><small>Origem: ${p.origem}</small>
+                    <span style="font-size: 0.85em; color: #666;">(${p.tipo_participante})</span>
+                    <br><small style="color: #555;">Origem: ${p.origem}</small>
                 </li>
             `).join('');
         }
@@ -266,9 +263,8 @@ async function carregarLobbyViagem(viagemId) {
         console.error('Erro ao carregar lobby:', err);
         alert('Erro ao carregar detalhes da viagem: ' + err.message);
     }
-}
+};
 
-// Carrega a lista de viagens que o usuário faz parte no Dashboard
 async function carregarMinhasViagens() {
     const elContainer = document.getElementById('minhas-viagens-lista');
     if (!elContainer || !usuarioAtual) return;
@@ -278,7 +274,7 @@ async function carregarMinhasViagens() {
             .from('viagem_participantes')
             .select(`
                 tipo_participante,
-                viagens:viagem_id ( id, destino, horario_chegada, codigo_convite )
+                viagens ( id, destino, horario_chegada, codigo_convite )
             `)
             .eq('usuario_id', usuarioAtual.id);
 
@@ -299,7 +295,7 @@ async function carregarMinhasViagens() {
                         <small>Chegada: ${new Date(v.horario_chegada).toLocaleString('pt-BR')}</small><br>
                         <small style="color: #0066cc;">Código: ${v.codigo_convite}</small>
                     </div>
-                    <button onclick="carregarLobbyViagem(${v.id})" style="padding: 6px 12px; cursor: pointer; background: #0066cc; color: white; border: none; border-radius: 4px;">Acessar</button>
+                    <button onclick="window.carregarLobbyViagem(${v.id})" class="btn-secondary" style="padding: 6px 12px; cursor: pointer;">Acessar</button>
                 </div>
             `;
         }).join('');
