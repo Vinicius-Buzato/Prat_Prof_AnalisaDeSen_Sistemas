@@ -289,13 +289,18 @@ async function carregarMinhasViagens() {
             const v = item.viagens;
             if (!v) return '';
             return `
-                <div style="background: #f8f9fa; border: 1px solid #e0e0e0; padding: 12px; margin-bottom: 8px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                <div style="background: #ffffff; border: 1px solid #e2e8f0; padding: 14px 18px; margin-bottom: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
                     <div>
-                        <strong>📍 ${v.destino}</strong><br>
-                        <small>Chegada: ${new Date(v.horario_chegada).toLocaleString('pt-BR')}</small><br>
-                        <small style="color: #0066cc;">Código: ${v.codigo_convite}</small>
+                        <strong style="font-size: 1em; color: #1e293b;">📍 ${v.destino}</strong><br>
+                        <small style="color: #64748b;">Chegada: ${new Date(v.horario_chegada).toLocaleString('pt-BR')}</small><br>
+                        <small style="color: #2563eb; font-weight: 600;">Código: ${v.codigo_convite}</small>
                     </div>
-                    <button onclick="window.carregarLobbyViagem(${v.id})" class="btn-secondary" style="padding: 6px 12px; cursor: pointer;">Acessar</button>
+                    <button onclick="window.carregarLobbyViagem(${v.id})" 
+                            style="padding: 8px 16px; cursor: pointer; background-color: #2563eb; color: #ffffff; border: none; border-radius: 6px; font-weight: 600; font-size: 0.875rem; transition: background-color 0.2s ease, transform 0.1s ease; white-space: nowrap; flex-shrink: 0;"
+                            onmouseover="this.style.backgroundColor='#1d4ed8'"
+                            onmouseout="this.style.backgroundColor='#2563eb'">
+                        Acessar →
+                    </button>
                 </div>
             `;
         }).join('');
