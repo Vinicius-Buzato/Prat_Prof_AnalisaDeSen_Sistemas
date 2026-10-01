@@ -1,6 +1,8 @@
 // Simulação de Banco de Dados usando localStorage
-let usuarioAtual = JSON.parse(localStorage.getItem('usuario')) || null;
-let dbViagens = JSON.parse(localStorage.getItem('viagens')) || {};
+const supabaseUrl = 'https://qvqdloqlicdoqevrtblr.supabase.co/rest/v1/';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2cWRsb3FsaWNkb3FldnJ0YmxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MTY5MzgsImV4cCI6MjEwNjM5MjkzOH0.70vwMDIXAeM6bZHg-qzdcoLOq0pOkdlvH1pYsBKEFXw';
+const supabase = window.supabase;
+const db = supabase.createClient(supabaseUrl, supabaseKey);
 
 document.addEventListener('DOMContentLoaded', () => {
     // Referências de Telas
