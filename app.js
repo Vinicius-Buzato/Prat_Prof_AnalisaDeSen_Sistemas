@@ -1,5 +1,5 @@
-const SUPABASE_URL = 'https://qvqdloqlicdoqevrtblr.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_zWeHsS3rE1yMxIKROCnZ9Q_8e68WfuR';
+window.SUPABASE_URL = window.SUPABASE_URL || 'https://qvqdloqlicdoqevrtblr.supabase.co';
+window.SUPABASE_KEY = window.SUPABASE_KEY || 'sb_publishable_zWeHsS3rE1yMxIKROCnZ9Q_8e68WfuR';
 // Inicialização segura utilizando a biblioteca global importada no HTML
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
