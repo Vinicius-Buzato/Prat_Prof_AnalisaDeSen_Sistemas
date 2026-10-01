@@ -1,8 +1,6 @@
 // Simulação de Banco de Dados usando localStorage
 const SUPABASE_URL = 'https://qvqdloqlicdoqevrtblr.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_zWeHsS3rE1yMxIKROCnZ9Q_8e68WfuR';
-
-
 // Inicialização segura utilizando a biblioteca global importada no HTML
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -34,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
             btnSubmit.innerText = 'Conectando...';
 
             try {
-                // Procura utilizador existente pelo e-mail na tabela em minúsculo
                 let { data: usuarioExistente, error: erroBusca } = await db
                     .from('usuarios')
                     .select('*')
@@ -45,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 let dadosUsuario = usuarioExistente;
 
-                // Se não existir na base de dados, realiza o registo
                 if (!dadosUsuario) {
                     const { data: novoUsuario, error: erroInsert } = await db
                         .from('usuarios')
@@ -57,7 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     dadosUsuario = novoUsuario;
                 }
 
-                // Guarda a sessão localmente
                 usuarioAtual = dadosUsuario;
                 localStorage.setItem('usuario', JSON.stringify(usuarioAtual));
                 verificarLogin();
@@ -85,10 +80,8 @@ document.addEventListener('DOMContentLoaded', () => {
             btnSubmit.innerText = 'A criar viagem...';
 
             try {
-                // Gera um código de convite aleatório de 6 caracteres
                 const codigoConvite = Math.random().toString(36).substring(2, 8).toUpperCase();
 
-                // Insere a nova viagem na tabela viagens
                 const { data: novaViagem, error: erroViagem } = await db
                     .from('viagens')
                     .insert([{
@@ -101,7 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (erroViagem) throw erroViagem;
 
-                // Relaciona o utilizador criador como Organizador na tabela viagem_participantes
                 const { error: erroPart } = await db
                     .from('viagem_participantes')
                     .insert([{
@@ -139,7 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
             btnSubmit.innerText = 'A procurar...';
 
             try {
-                // Procura a viagem pelo código de convite
                 const { data: viagem, error: erroBusca } = await db
                     .from('viagens')
                     .select('*')
@@ -152,7 +143,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
-                // Insere o utilizador como Passageiro
                 const { error: erroPart } = await db
                     .from('viagem_participantes')
                     .insert([{
@@ -163,7 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         tempo_estimado_minutos: 0
                     }]);
 
-                // Trata o erro caso o utilizador já faça parte da viagem
                 if (erroPart && !erroPart.message.includes('duplicate key')) {
                     throw erroPart;
                 }
@@ -229,10 +218,8 @@ function verificarLogin() {
     }
 }
 
-// Carrega os dados da viagem e a lista de participantes
 async function carregarLobbyViagem(viagemId) {
     try {
-        // Procura os dados da viagem
         const { data: viagem, error: erroV } = await db
             .from('viagens')
             .select('*')
@@ -241,7 +228,6 @@ async function carregarLobbyViagem(viagemId) {
 
         if (erroV) throw erroV;
 
-        // Procura os participantes e cruza com a tabela usuarios
         const { data: participantes, error: erroP } = await db
             .from('viagem_participantes')
             .select(`
@@ -256,7 +242,6 @@ async function carregarLobbyViagem(viagemId) {
         viagemAtual = viagem;
         verificarLogin();
 
-        // Atualiza a interface da página
         const elDestino = document.getElementById('lobby-destino');
         const elHorario = document.getElementById('lobby-horario');
         const elCodigo = document.getElementById('lobby-codigo');
