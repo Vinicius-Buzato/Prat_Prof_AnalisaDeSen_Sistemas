@@ -1,6 +1,6 @@
 // Simulação de Banco de Dados usando localStorage
 const SUPABASE_URL = 'https://qvqdloqlicdoqevrtblr.supabase.co/rest/v1';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2cWRsb3FsaWNkb3FldnJ0YmxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MTY5MzgsImV4cCI6MjEwNjM5MjkzOH0.70vwMDIXAeM6bZHg-qzdcoLOq0pOkdlvH1pYsBKEFXw';
+const SUPABASE_KEY = 'sb_publishable_zWeHsS3rE1yMxIKROCnZ9Q_8e68WfuR';
 
 // Inicialização segura utilizando a biblioteca global importada no HTML
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
