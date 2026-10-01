@@ -2,7 +2,7 @@
 // CONFIGURAÇÃO DO SUPABASE
 // ==========================================
 window.SUPABASE_URL = window.SUPABASE_URL || 'https://qvqdloqlicdoqevrtblr.supabase.co';
-window.SUPABASE_KEY = window.SUPABASE_KEY || 'SUA_CHAVE_PUBLISHABLE_OU_ANON_AQUI';
+window.SUPABASE_KEY = window.SUPABASE_KEY || 'sb_publishable_zWeHsS3rE1yMxIKROCnZ9Q_8e68WfuR';
 
 const db = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
 
