@@ -69,6 +69,49 @@ $ code .
 Como a aplicação utiliza HTML/JS nativo e a API REST do Supabase, basta abrir o arquivo `index.html` no navegador ou utilizar uma extensão como o *Live Server* do VS Code.
 ```
 
+## 💻 Guia de Execução para Desenvolvedores
+
+Se você é um desenvolvedor e deseja configurar, executar ou contribuir com o projeto em seu computador pessoal, siga os passos abaixo:
+
+### 📋 Pré-requisitos
+Certifique-se de ter instalado em sua máquina:
+- Um navegador web moderno (Chrome, Firefox, Edge).
+- O editor de código **VS Code** (ou similar).
+- A extensão **Live Server** (recomendada para simular um servidor local).
+
+### 🚀 Passo a Passo para Execução Local
+
+1. **Clone o repositório:**
+   Abra o seu terminal e execute o comando abaixo para clonar o projeto:
+   ```bash
+   git clone [https://github.com/Vinicius-Buzato/Prat_Prof_AnalisaDeSen_Sistemas.git](https://github.com/Vinicius-Buzato/Prat_Prof_AnalisaDeSen_Sistemas.git)
+   
+2. Acesse a pasta do projeto:
+
+```bash
+cd Prat_Prof_AnalisaDeSen_Sistemas
+```
+
+3. Abra o projeto no VS Code:
+```bash
+code .
+```
+
+4. Configuração do Backend (Supabase):
+- O projeto se conecta a uma instância do Supabase via API REST.
+- Certifique-se de que o arquivo de configuração JavaScript (app.js ou equivalente) possui as credenciais válidas da URL e da chave pública (anon key) do seu projeto Supabase configuradas nas constantes de conexão.
+
+5. Executando a aplicação:
+- Como a aplicação utiliza HTML/CSS/JavaScript nativos no frontend, você pode simplesmente dar dois cliques no arquivo index.html para abri-lo no navegador.
+- Recomendado: Clique com o botão direito sobre o arquivo index.html no VS Code e selecione "Open with Live Server" para rodar a aplicação em um servidor local simulado (http://localhost:5500).
+
+6. Após colar e salvar essa alteração no arquivo `README.md`, envie as alterações para o GitHub via terminal:
+```bash
+git add README.md
+git commit -m "docs: atualiza instrucoes detalhadas para desenvolvedores no README"
+git push origin main
+```
+
 ## 📂 Estrutura de Documentação
 
 Todos os artefatos de engenharia de software elaborados durante o processo unificado estão disponíveis na pasta de documentação do repositório:
