@@ -85,3 +85,5 @@ Todos os artefatos de engenharia de software elaborados durante o processo unifi
 | Nome | Curso | Função Principal |
 | :--- | :--- | :--- |
 | **Vinicius Ferreira Buzato** | Análise e Desenvolvimento de Sistemas | Desenvolvedor Full-Stack / Analista |
+
+Linha descritiva sobre a iteração 2
