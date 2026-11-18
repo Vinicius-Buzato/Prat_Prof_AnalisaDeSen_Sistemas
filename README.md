@@ -112,6 +112,39 @@ git commit -m "docs: atualiza instrucoes detalhadas para desenvolvedores no READ
 git push origin main
 ```
 
+## 🔗 Acesso à Aplicação e Dados de Teste
+
+Para validação dos casos de uso descritos neste relatório (UC01 e UC02), a aplicação encontra-se implantada e operacional na nuvem.
+
+### 🌐 Endereço de Acesso (URL)
+* **Aplicação Web (Vercel):** [https://seu-projeto.vercel.app](https://seu-projeto.vercel.app)  
+*(Disponível ininterruptamente para testes durante o período de avaliação).*
+
+---
+
+### 🔑 Credenciais e Massa de Dados para Testes
+
+Para testar os fluxos de autenticação, criação de viagens e entrada via lobby sem a necessidade de configurar novos cadastros, utilize os dados de homologação abaixo:
+
+#### 1. Acesso Inicial / Identificação (Simulação de Usuário)
+* **Nome de Teste:** `Usuário Avaliador`
+* **E-mail de Teste:** `avaliador@mackenzie.br`
+
+#### 2. Massa de Dados Ativa no Supabase (Para Teste do Lobby - UC02)
+Caso deseje testar diretamente o caso de uso de entrada em um grupo existente:
+* **Código de Convite Ativo:** `ROTA2026` *(ou insira aqui o código real gerado no seu painel)*
+* **Destino Cadastrado:** `Allianz Parque, São Paulo`
+* **Horário Limite de Chegada:** `19:30`
+
+---
+
+### 🧭 Roteiro Rápido para o Avaliador
+1. Acesse a **URL da Vercel** pelo navegador.
+2. Insira os dados de identificação do usuário de teste.
+3. **Para testar o UC01:** Crie uma nova viagem informando um destino e horário no Dashboard.
+4. **Para testar o UC02:** Utilize o **Código de Convite** fornecido acima na tela de Lobby para ingressar na viagem e definir um endereço de origem de teste.
+5. As alterações poderão ser auditadas em tempo real nas tabelas `usuarios`, `viagens` e `viagem_participantes` no banco de dados PostgreSQL (Supabase).
+
 ## 📂 Estrutura de Documentação
 
 Todos os artefatos de engenharia de software elaborados durante o processo unificado estão disponíveis na pasta de documentação do repositório:
