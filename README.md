@@ -1,7 +1,7 @@
 # 🗺️ App de Otimização de Rotas Compartilhadas
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Fase-Constru%C3%A7%C3%A3o%20(1%C2%AA%20Itera%C3%A7%C3%A3o)-success?style=for-the-badge" alt="Status do Projeto">
+  <img src="https://img.shields.io/badge/Fase-Constru%C3%A7%C3%A3o%20(2%C2%AA%20Itera%C3%A7%C3%A3o%20%7C%20v2)-success?style=for-the-badge" alt="Status do Projeto">
   <img src="https://img.shields.io/badge/Disciplina-Pr%C3%A1tica%20Profissional%20ADS-blue?style=for-the-badge" alt="Disciplina">
   <img src="https://img.shields.io/badge/Universidade-Mackenzie-cc0000?style=for-the-badge" alt="Universidade">
 </div>
@@ -14,11 +14,11 @@
 
 ## 🌍 Acesso à Aplicação
 
-A versão da 1ª iteração já está em produção e pode ser acessada diretamente pelo navegador:
+A aplicação encontra-se implantada em produção na nuvem e disponível para testes:
 
 🔗 **[Acessar Rotas Compartilhadas na Vercel](https://pratprofsnalisasesensistemas-git-main-vinicius-buzatos-projects.vercel.app)**
 
-*(Utilize o **Guia do Usuário** presente na documentação para instruções de uso).*
+*(Disponível ininterruptamente durante todo o período de avaliação).*
 
 ---
 
@@ -31,13 +31,12 @@ Imagine um grupo de amigos que vai viajar para um show. Eles partem de diferente
 
 ---
 
-## ✨ Funcionalidades (1ª Iteração)
+## ✨ Funcionalidades Implementadas
 
-- **👤 Gestão de Usuários:** Autenticação e identificação (Mock/Simulada nesta etapa) gravadas no banco de dados.
-- **📅 Criação de Grupos de Viagem:** Organizadores podem definir um destino, criar viagens ativas no Dashboard e gerar códigos de convite.
-- **🔗 Entrada de Participantes:** Associação de usuários a viagens específicas utilizando um código único via Lobby.
-- **📍 Definição de Partida:** Passageiros informam sua origem exata ao entrar no grupo.
-- **💾 Persistência em Tempo Real:** Dados de usuários, viagens e vínculos relacionais persistidos em nuvem.
+- **👤 Gestão de Usuários:** Autenticação e identificação gravadas no banco de dados relacional.
+- **📅 Criação de Grupos de Viagem (UC01):** Organizadores podem definir um destino, data e horário limite de chegada no Dashboard, gerando códigos de convite únicos.
+- **🔗 Entrada de Participantes e Partida (UC02):** Associação de passageiros a viagens específicas utilizando o código único via Lobby e definição do endereço de origem.
+- **💾 Persistência em Tempo Real:** Dados de usuários, viagens e vínculos relacionais (`viagem_participantes`) persistidos em nuvem.
 
 ---
 
@@ -45,49 +44,30 @@ Imagine um grupo de amigos que vai viajar para um show. Eles partem de diferente
 
 O projeto utiliza a seguinte arquitetura de software:
 
-* **Frontend:** ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white) ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white) ![JavaScript](https://img.shields.io/badge/JavaScript-323330?style=flat&logo=javascript&logoColor=F7DF1E)
-* **Backend & Banco de Dados:** ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat&logo=supabase&logoColor=white) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=flat&logo=postgresql&logoColor=white)
-* **Ambiente & Versionamento:** ![VS Code](https://img.shields.io/badge/VS%20Code-0078D4?style=flat&logo=visual%20studio%20code&logoColor=white) ![Git](https://img.shields.io/badge/GIT-E44C30?style=flat&logo=git&logoColor=white)
-* **Deploy e Hospedagem:** ![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat&logo=vercel&logoColor=white)
+- **Frontend:** ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white) ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white) ![JavaScript](https://img.shields.io/badge/JavaScript-323330?style=flat&logo=javascript&logoColor=F7DF1E)
+- **Backend & Banco de Dados:** ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat&logo=supabase&logoColor=white) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=flat&logo=postgresql&logoColor=white)
+- **Ambiente & Versionamento:** ![VS Code](https://img.shields.io/badge/VS%20Code-0078D4?style=flat&logo=visual%20studio%20code&logoColor=white) ![Git](https://img.shields.io/badge/GIT-E44C30?style=flat&logo=git&logoColor=white)
+- **Deploy e Hospedagem:** ![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat&logo=vercel&logoColor=white)
 
 ---
 
-## 🚀 Como Executar o Projeto Localmente
-
-Para rodar a aplicação no seu ambiente de desenvolvimento:
-
-```bash
-# Clone este repositório (Tag v0.1 - Entrega Aula 3)
-$ git clone [https://github.com/Vinicius-Buzato/Prat_Prof_AnalisaDeSen_Sistemas.git](https://github.com/Vinicius-Buzato/Prat_Prof_AnalisaDeSen_Sistemas.git)
-
-# Acesse a pasta do projeto
-$ cd Prat_Prof_AnalisaDeSen_Sistemas
-
-# Abra no VS Code ou editor de preferência
-$ code .
-
-Como a aplicação utiliza HTML/JS nativo e a API REST do Supabase, basta abrir o arquivo `index.html` no navegador ou utilizar uma extensão como o *Live Server* do VS Code.
-```
-
 ## 💻 Guia de Execução para Desenvolvedores
 
-Se você é um desenvolvedor e deseja configurar, executar ou contribuir com o projeto em seu computador pessoal, siga os passos abaixo:
+Para configurar e executar a aplicação localmente em seu computador pessoal, siga os passos abaixo:
 
 ### 📋 Pré-requisitos
-Certifique-se de ter instalado em sua máquina:
-- Um navegador web moderno (Chrome, Firefox, Edge).
-- O editor de código **VS Code** (ou similar).
-- A extensão **Live Server** (recomendada para simular um servidor local).
+- Navegador web moderno (Chrome, Firefox, Edge).
+- Editor de código **VS Code** (ou similar).
+- Extensão **Live Server** (recomendada para simular um servidor local).
 
 ### 🚀 Passo a Passo para Execução Local
 
 1. **Clone o repositório:**
-   Abra o seu terminal e execute o comando abaixo para clonar o projeto:
-   ```bash
+```bash
    git clone [https://github.com/Vinicius-Buzato/Prat_Prof_AnalisaDeSen_Sistemas.git](https://github.com/Vinicius-Buzato/Prat_Prof_AnalisaDeSen_Sistemas.git)
-   
-2. Acesse a pasta do projeto:
+```
 
+2. Acesse a pasta do projeto:
 ```bash
 cd Prat_Prof_AnalisaDeSen_Sistemas
 ```
@@ -98,12 +78,11 @@ code .
 ```
 
 4. Configuração do Backend (Supabase):
-- O projeto se conecta a uma instância do Supabase via API REST.
-- Certifique-se de que o arquivo de configuração JavaScript (app.js ou equivalente) possui as credenciais válidas da URL e da chave pública (anon key) do seu projeto Supabase configuradas nas constantes de conexão.
+- O frontend se comunica diretamente com a instância do Supabase via API REST.
+- Certifique-se de que o arquivo de configuração JavaScript (app.js ou equivalente) contém as credenciais válidas (SUPABASE_URL e chave pública anon key) configuradas nas constantes de conexão.
 
 5. Executando a aplicação:
-- Como a aplicação utiliza HTML/CSS/JavaScript nativos no frontend, você pode simplesmente dar dois cliques no arquivo index.html para abri-lo no navegador.
-- Recomendado: Clique com o botão direito sobre o arquivo index.html no VS Code e selecione "Open with Live Server" para rodar a aplicação em um servidor local simulado (http://localhost:5500).
+- Como a aplicação utiliza HTML/CSS/JavaScript nativos, você pode abrir o arquivo index.html diretamente no navegador ou clicar com o botão direito sobre ele no VS Code e selecionar "Open with Live Server" (http://localhost:5500).
 
 6. Após colar e salvar essa alteração no arquivo `README.md`, envie as alterações para o GitHub via terminal:
 ```bash
@@ -112,49 +91,40 @@ git commit -m "docs: atualiza instrucoes detalhadas para desenvolvedores no READ
 git push origin main
 ```
 
-## 🔗 Acesso à Aplicação e Dados de Teste
+## 🔑 Dados de Teste e Roteiro de Validação
 
-Para validação dos casos de uso descritos neste relatório (UC01 e UC02), a aplicação encontra-se implantada e operacional na nuvem.
+Para validar os fluxos dos casos de uso (UC01 e UC02) sem precisar configurar novos cadastros do zero, utilize os dados abaixo:
 
-### 🌐 Endereço de Acesso (URL)
-* **Aplicação Web (Vercel):** [https://seu-projeto.vercel.app](https://seu-projeto.vercel.app)  
-*(Disponível ininterruptamente para testes durante o período de avaliação).*
-
----
-
-### 🔑 Credenciais e Massa de Dados para Testes
-
-Para testar os fluxos de autenticação, criação de viagens e entrada via lobby sem a necessidade de configurar novos cadastros, utilize os dados de homologação abaixo:
-
-#### 1. Acesso Inicial / Identificação (Simulação de Usuário)
+### 1. Identificação (Usuário de Teste)
 * **Nome de Teste:** `Usuário Avaliador`
 * **E-mail de Teste:** `avaliador@mackenzie.br`
 
-#### 2. Massa de Dados Ativa no Supabase (Para Teste do Lobby - UC02)
-Caso deseje testar diretamente o caso de uso de entrada em um grupo existente:
-* **Código de Convite Ativo:** `ROTA2026` *(ou insira aqui o código real gerado no seu painel)*
-* **Destino Cadastrado:** `Allianz Parque, São Paulo`
-* **Horário Limite de Chegada:** `19:30`
+### 2. Massa de Dados Ativa (Para Teste do Lobby - UC02)
+- **Código de Convite Ativo:** `61HXYX`
+- **Destino Cadastrado:** `Allianz Parque, São Paulo`
+- **Horário Limite de Chegada:** `19:30`
+
+### 🧭 Roteiro Rápido
+1. Acesse a **[URL da Aplicação na Vercel](https://pratprofsnalisasesensistemas-git-main-vinicius-buzatos-projects.vercel.app)**.
+2. Realize a identificação utilizando o **Usuário de Teste** (ou cadastre um novo nome/e-mail).
+3. **Para testar o UC01:** No Dashboard, informe um destino, data e horário limite para criar uma viagem e gerar um novo código de convite.
+4. **Para testar o UC02:** Na área do Lobby, insira o **Código de Convite** ativo, preencha um endereço de origem e confirme a entrada no grupo.
 
 ---
 
-### 🧭 Roteiro Rápido para o Avaliador
-1. Acesse a **URL da Vercel** pelo navegador.
-2. Insira os dados de identificação do usuário de teste.
-3. **Para testar o UC01:** Crie uma nova viagem informando um destino e horário no Dashboard.
-4. **Para testar o UC02:** Utilize o **Código de Convite** fornecido acima na tela de Lobby para ingressar na viagem e definir um endereço de origem de teste.
-5. As alterações poderão ser auditadas em tempo real nas tabelas `usuarios`, `viagens` e `viagem_participantes` no banco de dados PostgreSQL (Supabase).
+## 📂 Estrutura de Documentação e Artefatos
 
-## 📂 Estrutura de Documentação
-
-Todos os artefatos de engenharia de software elaborados durante o processo unificado estão disponíveis na pasta de documentação do repositório:
+Todos os artefatos de engenharia de software elaborados durante o ciclo do projeto estão consolidados:
 
 - [x] Documento de Visão e Requisitos (Fase de Concepção)
-- [x] Diagrama de Casos de Uso
-- [x] Guia do Usuário da Aplicação
-- [x] Diagrama de Implantação UML
+- [x] Diagrama de Casos de Uso (UC01 e UC02)
+- [x] Diagrama de Implantação UML (Vercel + Supabase)
+- [x] Guia do Usuário e Guia de Execução Local
 - [x] Evidências de Persistência e Consultas SQL (Supabase)
-- [ ] Especificação da Integração com API de Mapas *(Próximas Iterações)*
+- [x] Plano e Execução de Testes (100% de Cobertura de Execução e Requisitos)
+- [ ] Integração com API de Roteirização / Mapas *(Evoluções Futuras)*
+
+---
 
 ## 👥 Equipe de Desenvolvimento
 
@@ -162,4 +132,3 @@ Todos os artefatos de engenharia de software elaborados durante o processo unifi
 | :--- | :--- | :--- |
 | **Vinicius Ferreira Buzato** | Análise e Desenvolvimento de Sistemas | Desenvolvedor Full-Stack / Analista |
 
-Linha descritiva sobre a iteração 2
